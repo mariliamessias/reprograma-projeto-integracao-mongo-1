@@ -15,7 +15,7 @@ exports.post = function (req, res) {
         else {
             res.status(201).send({
                 status: true,
-                mensagem: "Aluna incluida com sucesso"
+                mensagem: "Cliente incluído com sucesso"
             });
         }
     });
