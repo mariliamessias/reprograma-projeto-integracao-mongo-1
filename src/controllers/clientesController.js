@@ -1,4 +1,5 @@
 const Clientes = require('../model/clientes');
+const Joi = require('joi');
 
 exports.get = (req, res) => {
     Clientes.find(function (err, clientes) {
@@ -25,7 +26,7 @@ exports.getCompradores = (req, res) => {
     Clientes.find(function (err, clientes) {
         if (err) res.status(500).send(err);
 
-        const clientesCompradores = clientes.filter(cliente => cliente.comprou == true )
+        const clientesCompradores = clientes.filter(cliente => cliente.comprou == true)
         const clientesRetorno = clientesCompradores.map(cliente => {
             return {
                 nome: cliente.nome,
@@ -46,12 +47,33 @@ exports.getByCpf = (req, res) => {
 }
 
 exports.updateCliente = (req, res) => {
+
+    if (!validaFormulario(req.body)) return res.status(400).send({ mensagem: "campos inválidos" });
+
     Clientes.update(
         { cpf: req.params.cpf },
         { $set: req.body },
         { upsert: true },
         function (err) {
             if (err) return res.status(500).send(err);
-            res.status(200).send({ message: "Atualizado com sucesso!" });
+            res.status(200).send({ mensagem: "Atualizado com sucesso!" });
         })
+
+}
+
+const validaFormulario = (campos) => {
+
+    const schema = {
+        nome: Joi.string().min(1).required(),
+        email: Joi.string().min(1).required(),
+    }
+
+    const validation = Joi.validate(campos, schema);
+
+    if (validation.error) {
+        return false;
+    }
+
+    return true;
+
 }
