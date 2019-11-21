@@ -28,19 +28,30 @@ exports.getCompradores = (req, res) => {
         const clientesCompradores = clientes.filter(cliente => cliente.comprou == true )
         const clientesRetorno = clientesCompradores.map(cliente => {
             return {
-               nome: cliente.nome,
-               email: cliente.email
+                nome: cliente.nome,
+                email: cliente.email
             }
         })
-        
+
         res.status(200).send(clientesRetorno);
     })
 }
+
 exports.getByCpf = (req, res) => {
     const cpf = req.params.cpf;
     Clientes.find({ cpf }, function (err, cliente) {
-        if (err) res.status(500).send(err);        
+        if (err) res.status(500).send(err);
         res.status(200).send(cliente);
     })
 }
 
+exports.updateCliente = (req, res) => {
+    Clientes.update(
+        { cpf: req.params.cpf },
+        { $set: req.body },
+        { upsert: true },
+        function (err) {
+            if (err) return res.status(500).send(err);
+            res.status(200).send({ message: "Atualizado com sucesso!" });
+        })
+}
