@@ -1,6 +1,25 @@
 const express = require("express")
 const mongoose = require("mongoose")
 const bodyParser = require('body-parser')
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
+
+const swaggerOptions = {
+  swaggerDefinition : {
+    info: {
+      title: "Reprograma Api de Clientes",
+      description: "Api de clientes",
+      contact: {
+        name: "Nome da Aluna"
+      },
+      servers: ["http://localhost:3000"]
+    }
+  },
+
+  apis: ['src/routes/clientesRoute.js']
+}
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 const app = express()
 
@@ -36,6 +55,8 @@ app.use(function(req, res, next) {
 })
 
 app.use(bodyParser.json());
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 app.use("/clientes", clientes)
 
