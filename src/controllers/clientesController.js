@@ -2,7 +2,8 @@ const Clientes = require('../model/clientes');
 const Joi = require('joi');
 
 exports.get = (req, res) => {
-    Clientes.find(function (err, clientes) {
+    const filter = req.query
+    Clientes.find(filter, function (err, clientes) {
         if (err) res.status(500).send(err);
         res.status(200).send(clientes);
     })
