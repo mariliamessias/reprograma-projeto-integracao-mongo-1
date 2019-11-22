@@ -62,11 +62,33 @@ exports.updateCliente = (req, res) => {
 
 }
 
+exports.deleteCliente = (req, res) => {
+    const cpf = req.params.cpf;
+
+    Clientes.findOne({ cpf }, function (err, cliente) {
+        if (err) res.status(500).send(err);
+       
+        if(!cliente) return res.status(200).send({mensagem: "infelizmente não localizamos o cliente para remover"});
+        
+        cliente.remove(function (err){
+            if (!err) {
+                res.status(200).send({ message: 'Cliente removido com sucesso...' });
+              } 
+        })
+    })
+
+}
+
 const validaFormulario = (campos) => {
 
     const schema = {
-        nome: Joi.string().min(1).required(),
-        email: Joi.string().min(1).required(),
+        nome: Joi.string(),
+        email: Joi.string(),
+        cpf : Joi.number(),
+        dataNascimento: Joi.date(),
+        estadoCivil: Joi.string(),
+        telefone: Joi.number(),
+        comprou: Joi.boolean()
     }
 
     const validation = Joi.validate(campos, schema);
