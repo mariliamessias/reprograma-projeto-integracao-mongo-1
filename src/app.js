@@ -8,7 +8,7 @@ const app = express()
 //porta padrão do mongo: 27017
 //banco de dados utilizado: reprograma
 
-mongoose.connect("mongodb+srv://admin:admin123@reprograma-xazlh.mongodb.net/clientes",  { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/clientes",  { useNewUrlParser: true });
 
 //representação da conexão com o banco de dados 
 let db = mongoose.connection;

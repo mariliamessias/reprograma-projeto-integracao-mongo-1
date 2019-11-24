@@ -8,8 +8,9 @@ const ClientesSchema = new mongoose.Schema({
     dataNascimento: { type: Date },
     estadoCivil: { type: String},
     telefone: {type: Number},
-    comprou: {type: Boolean}
-
+    comprou: {type: Boolean},
+    cep: {type: String},
+    logradouro: {type: String}
 }, {
     versionKey: false
 })

@@ -1,5 +1,6 @@
 const Clientes = require('../model/clientes');
 const Joi = require('joi');
+const fetch = require('node-fetch');
 
 exports.get = (req, res) => {
     const filter = req.query
@@ -9,8 +10,10 @@ exports.get = (req, res) => {
     })
 }
 
-exports.post = function (req, res) {
+exports.post = async function (req, res) {
     let cliente = new Clientes(req.body);
+
+    cliente.logradouro = await buscarCeps(cliente.cep).then(endereco => endereco.logradouro)
 
     cliente.save(function (err) {
         if (err) res.status(500).send(err);
@@ -67,13 +70,13 @@ exports.deleteCliente = (req, res) => {
 
     Clientes.findOne({ cpf }, function (err, cliente) {
         if (err) res.status(500).send(err);
-       
-        if(!cliente) return res.status(200).send({mensagem: "infelizmente não localizamos o cliente para remover"});
-        
-        cliente.remove(function (err){
+
+        if (!cliente) return res.status(200).send({ mensagem: "infelizmente não localizamos o cliente para remover" });
+
+        cliente.remove(function (err) {
             if (!err) {
                 res.status(200).send({ message: 'Cliente removido com sucesso...' });
-              } 
+            }
         })
     })
 
@@ -84,7 +87,7 @@ const validaFormulario = (campos) => {
     const schema = {
         nome: Joi.string(),
         email: Joi.string(),
-        cpf : Joi.number(),
+        cpf: Joi.number(),
         dataNascimento: Joi.date(),
         estadoCivil: Joi.string(),
         telefone: Joi.number(),
@@ -98,5 +101,15 @@ const validaFormulario = (campos) => {
     }
 
     return true;
+
+}
+
+const buscarCeps = (cep) => {
+
+    return fetch(`https://viacep.com.br/ws/${cep}/json/`, {
+        method: 'GET',
+    })
+        .then(response => response.json())
+        .then(json => json)
 
 }
